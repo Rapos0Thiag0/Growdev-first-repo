@@ -159,16 +159,17 @@ const incomeLista: Array<number> = [];
 
 app.get("/users/:userId/transactions", (req: Request, res: Response) => {
   const id = Number(req.params.userId);
-  const usersId = users.findIndex((user) => user.id == id);
-  if (usersId != -1) {
-    let outcome = users[usersId].transactions.findIndex(
+  const userId = users.findIndex((user) => user.id == id);
+  if (userId != -1) {
+    let outcome = users[userId].transactions.findIndex(
       (user) => user.type == "outcome"
     );
-    outcomeLista.push(Number(users[usersId].transactions[outcome].value));
-    let income = users[usersId].transactions.findIndex(
+
+    outcomeLista.push(Number(users[userId].transactions[outcome].value));
+    let income = users[userId].transactions.findIndex(
       (user) => user.type == "income"
     );
-    incomeLista.push(Number(users[usersId].transactions[income].value));
+    incomeLista.push(Number(users[userId].transactions[income].value));
     const outcomeTotal: number = outcomeLista.reduce(
       (previousValue, currentValue) => previousValue + currentValue
     );

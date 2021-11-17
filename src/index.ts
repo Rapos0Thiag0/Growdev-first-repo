@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import "dotenv/config";
 
 const app = express();
@@ -7,7 +7,7 @@ app.use(express.json());
 const port = process.env.PORT;
 
 app.listen(port, () => {
-  console.log("Servidor inicializado");
+  console.log(`Servidor inicializado e rodando na PORT: ${port}`);
 });
 
 let userId: number = 3;

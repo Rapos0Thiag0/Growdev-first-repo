@@ -10,7 +10,7 @@ app.listen(port, () => {
   console.log("Servidor inicializado");
 });
 
-let userId: number = 0;
+let userId: number = 3;
 class User {
   public id: number;
   public name: string;
@@ -42,7 +42,7 @@ const users: Array<User> = [
   new User(2, "Maria", "000000000-03", "teste@maria.com", 32, []),
 ];
 
-let idTransaction: number = 3;
+let idTransaction: number = 0;
 class Transaction {
   public id: number;
   public title: string;
@@ -149,8 +149,19 @@ app.get("/users/:userId/transactions/:id", (req: Request, res: Response) => {
   const idTransaction = Number(req.params.id);
 
   const usersId = users.findIndex((user) => user.id == userId);
-  if (usersId != -1) {
-    res.status(200).send(users[usersId].transactions[idTransaction]);
+  const IdTransactions = users[userId].transactions.findIndex(
+    (user) => user.id == idTransaction
+  );
+  if (usersId > -1) {
+    if (IdTransactions > -1) {
+      res.status(200).send(users[usersId].transactions[idTransaction]);
+    } else {
+      res
+        .status(400)
+        .send(
+          `Não foi possível encontrar a transação com id: ${idTransaction}`
+        );
+    }
   } else {
     res
       .status(400)
@@ -160,26 +171,23 @@ app.get("/users/:userId/transactions/:id", (req: Request, res: Response) => {
 
 const outcomeLista: Array<number> = [];
 const incomeLista: Array<number> = [];
-
 app.get("/users/:userId/transactions", (req: Request, res: Response) => {
   const id = Number(req.params.userId);
   const userId = users.findIndex((user) => user.id == id);
-  if (userId != -1) {
+  const reducer = (acumulador: any, valorAtual: any) => acumulador + valorAtual;
+  if (userId > -1) {
     let outcome = users[userId].transactions.findIndex(
       (user) => user.type == "outcome"
     );
-
     outcomeLista.push(Number(users[userId].transactions[outcome].value));
+    const outcomeTotal: number = outcomeLista.reduce(reducer);
+
     let income = users[userId].transactions.findIndex(
       (user) => user.type == "income"
     );
     incomeLista.push(Number(users[userId].transactions[income].value));
-    const outcomeTotal: number = outcomeLista.reduce(
-      (previousValue, currentValue) => previousValue + currentValue
-    );
-    const incomeTotal: number = incomeLista.reduce(
-      (previousValue, currentValue) => previousValue + currentValue
-    );
+    const incomeTotal: number = incomeLista.reduce(reducer);
+
     const total: number = Number(incomeTotal) - Number(outcomeTotal);
 
     const balance = {
@@ -198,10 +206,11 @@ app.put("/users/:userId/transactions/:id", (req: Request, res: Response) => {
   const title = String(req.body.title);
   const value = Number(req.body.value);
   const type = String(req.body.type);
-  const idTransactions = Number(req.params.idTransactions);
+  const idTransactions = Number(req.params.id);
   const usersId = users.findIndex((user) => user.id == userId);
-  if (usersId != -1) {
-    if (title == "" || value == Number("") || type == "") {
+
+  if (usersId > -1) {
+    if (title == "undefined" || isNaN(value) || type == "undefined") {
       res.send("Preencha todos os campos!");
     } else {
       users[usersId].transactions[idTransactions].title = title;

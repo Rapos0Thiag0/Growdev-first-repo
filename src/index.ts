@@ -10,7 +10,6 @@ app.listen(port, () => {
   console.log("Servidor inicializado");
 });
 
-const users: Array<User> = [];
 let userId: number = 0;
 class User {
   public id: number;
@@ -37,8 +36,13 @@ class User {
     this.transactions = transactions;
   }
 }
+const users: Array<User> = [
+  new User(0, "Paulo", "000000000-01", "teste@paulo.com", 25, []),
+  new User(1, "Cezar", "000000000-02", "teste@cezar.com", 27, []),
+  new User(2, "Maria", "000000000-03", "teste@maria.com", 32, []),
+];
 
-let idTransaction: number = 0;
+let idTransaction: number = 3;
 class Transaction {
   public id: number;
   public title: string;
